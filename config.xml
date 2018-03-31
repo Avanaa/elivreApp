@@ -93,4 +93,10 @@
         <variable name="UPDATE_METHOD" value="background" />
         <variable name="MAX_STORE" value="2" />
     </plugin>
+    <plugin name="cordova-plugin-googlemaps" spec="^2.2.9">
+        <variable name="API_KEY_FOR_ANDROID" value="AIzaSyDodj5v_LzojNjx8Rj8xpf8n9LNbDcJZsU" />
+        <variable name="API_KEY_FOR_IOS" value="AIzaSyDodj5v_LzojNjx8Rj8xpf8n9LNbDcJZsU" />
+        <variable name="PLAY_SERVICES_VERSION" value="12.0.0" />
+        <variable name="ANDROID_SUPPORT_V4_VERSION" value="24.1.0" />
+    </plugin>
 </widget>
