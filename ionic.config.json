@@ -1,6 +1,6 @@
 {
   "name": "elivre",
-  "app_id": "",
+  "app_id": "f2e79915",
   "type": "ionic-angular",
   "integrations": {
     "cordova": {}
