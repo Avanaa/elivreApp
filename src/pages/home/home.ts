@@ -34,9 +34,7 @@ export class HomePage {
         });
     }
 
-    initMap() {
-
-        let mapOptions : GoogleMapOptions;
+    getLocation() {
 
         let loader = this._loadingCtrl.create({
             content : 'Carregando localização... Aguarde...'
@@ -45,19 +43,19 @@ export class HomePage {
 
         this._geolocation.getCurrentPosition()
             .then((data) => {
-                mapOptions = {
-                    camera : {
-                        target : {
-                            lat : data.coords.latitude,
-                            lng : data.coords.longitude
-                        },
-                    zoom : 18,
-                    tilt : 30
-                    }
-                };
-                let element = this.mapElement.nativeElement;
-                this._map = GoogleMaps.create(element, mapOptions);
                 loader.dismiss();
+
+                let alert = this._alertCtrl.create({
+                    title : 'Localização encontrada',
+                    subTitle : 'Sua Localização atual é lat: ' + 
+                        data.coords.latitude + 
+                        ' lng: ' + data.coords.longitude,
+                    buttons : ['Ok']
+                });
+                alert.present();
+
+                this._myLocation = new LatLng(data.coords.latitude, data.coords.longitude);
+                this.initMap();
             })
             .catch((err) => {
                 let alert = this._alertCtrl.create({
@@ -67,5 +65,24 @@ export class HomePage {
                 });
                 alert.present();
             });        
+    }
+
+    initMap(){
+
+        let mapOptions : GoogleMapOptions;
+
+        let element = this.mapElement.nativeElement;
+        this._map = GoogleMaps.create(element);
+        
+        this._map.one(GoogleMapsEvent.MAP_READY)
+            .then(() => {
+                let mapOptions = {
+                    target : this._myLocation,
+                    zoom : 18
+                };
+
+                this._map.moveCamera(mapOptions);
+
+            });
     }
 }
