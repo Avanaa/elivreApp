@@ -67,7 +67,7 @@ export class PostServiceProvider {
   public delete(post : Post){
     firebase.database().ref('/posts').set({
       uuid : post.uuid,
-      ativo : post.ativo
+      ativo : false
     });
   }
 }
