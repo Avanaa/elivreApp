@@ -6,14 +6,17 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { NovoPostPage } from '../pages/novo-post/novo-post';
+import { PostServiceProvider } from '../providers/post-service/post-service';
+import { FeedPage } from '../pages/feed/feed';
 
-// Geolocalização
-import { Geolocation } from '@ionic-native/geolocation'
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    NovoPostPage,
+    FeedPage
   ],
   imports: [
     BrowserModule,
@@ -22,13 +25,15 @@ import { Geolocation } from '@ionic-native/geolocation'
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    NovoPostPage,
+    FeedPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    Geolocation
+    PostServiceProvider
   ]
 })
 export class AppModule {}

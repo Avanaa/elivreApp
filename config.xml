@@ -81,10 +81,6 @@
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <plugin name="cordova-plugin-ionic-webview" spec="^1.1.16" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
-    <plugin name="cordova-plugin-geolocation" spec="^4.0.1">
-        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="To locate you" />
-    </plugin>
-    <engine name="android" spec="~7.0.0" />
     <plugin name="cordova-plugin-ionic" spec="^4.1.3">
         <variable name="APP_ID" value="f2e79915" />
         <variable name="CHANNEL_NAME" value="Master" />
@@ -93,10 +89,8 @@
         <variable name="UPDATE_METHOD" value="background" />
         <variable name="MAX_STORE" value="2" />
     </plugin>
-    <plugin name="cordova-plugin-googlemaps" spec="^2.2.9">
-        <variable name="API_KEY_FOR_ANDROID" value="AIzaSyDodj5v_LzojNjx8Rj8xpf8n9LNbDcJZsU" />
-        <variable name="API_KEY_FOR_IOS" value="AIzaSyDodj5v_LzojNjx8Rj8xpf8n9LNbDcJZsU" />
-        <variable name="PLAY_SERVICES_VERSION" value="12.0.0" />
-        <variable name="ANDROID_SUPPORT_V4_VERSION" value="24.1.0" />
+    <plugin name="cordova-plugin-geolocation" spec="^4.0.1">
+        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="To locate you" />
     </plugin>
+    <engine name="android" spec="~7.0.0" />
 </widget>

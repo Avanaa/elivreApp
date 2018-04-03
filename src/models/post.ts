@@ -2,7 +2,7 @@ import { DateTime } from "ionic-angular";
 import { Local } from "./local";
 import { Avaliacao } from "./avaliacao";
 
-export interface Post {
+export class Post {
 
     uuid : string;
     usuario : string;
@@ -12,4 +12,5 @@ export interface Post {
     local : Local;
     data_hora : DateTime;
     comentarios : Avaliacao[];
+    ativo : boolean;
 }

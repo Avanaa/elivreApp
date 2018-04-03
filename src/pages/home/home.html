@@ -1,11 +1,18 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Ionic Blank
+      Mapa
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
+
+  <ion-fab bottom right>
+    <button ion-fab (click)="novoPost()"><ion-icon name="add"></ion-icon></button>
+    <!--<button ion-fab (click)="feed()"><ion-icon name="paper"></ion-icon></button>-->
+  </ion-fab>
+
   <div #map id="map"></div>
+
 </ion-content>

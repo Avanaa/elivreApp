@@ -1,4 +1,4 @@
-export interface Local {
+export class Local {
 
     lat : Float32Array;
     lng : Float32Array;

@@ -1,6 +1,6 @@
 import { DateTime } from "ionic-angular";
 
-export interface Avaliacao {
+export class Avaliacao {
     
     uuid : string;
     usuario : string;
