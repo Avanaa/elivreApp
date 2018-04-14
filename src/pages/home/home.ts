@@ -18,15 +18,16 @@ export class HomePage {
     @ViewChild('map') mapElement : ElementRef;
     public map : any;
 
-    constructor( public  navCtrl: NavController, 
-        public  platform     : Platform,
-        private _geolocation : GeolocationProvider,
-        private _db          : PostServiceProvider ) {
+    constructor( public navCtrl : NavController, 
+        public  platform        : Platform,
+        private _geolocation    : GeolocationProvider,
+        private _db             : PostServiceProvider ) {
 
             platform.ready().then(() => { 
                 this._geolocation.getCurrentPosition()
                     .then(() => {
                         this.initMap();
+                        //this._db.getList().forEach((post) => { this.addMarker(post.local) });
                     })
                 });
     }
@@ -36,25 +37,24 @@ export class HomePage {
         console.log('Init Map Running...');
 
         this.map = new google.maps.Map( this.mapElement.nativeElement , {
-            zoom : 16,
-            center : { 
-                lat: this._geolocation.getLocal().lat,
-                lng: this._geolocation.getLocal().lng }
+            zoom    : 16,
+            center  : { 
+                lat : this._geolocation.getLocal().lat,
+                lng : this._geolocation.getLocal().lng }
         });
     }
 
-    addMarker(){
-        this.novoPost();
+    addMarker(local : Local){
+
+        console.log('Add Marker Running...');
+        // Adicionar marcação no mapa
     }
 
-    public novoPost(){
+    public newPost(){
+
         this.navCtrl.push( NovoPostPage, {
             'local' : this._geolocation.getLocal(),
-            'db' : this._db
+            'db'    : this._db
         } );
-    }
-
-    public feed(){
-        this.navCtrl.push( FeedPage );
     }
 }

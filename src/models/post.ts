@@ -3,7 +3,17 @@ import { Avaliacao } from "./avaliacao";
 
 export class Post {
 
-    constructor(){}
+    constructor(){
+
+        this.uuid = '';
+        this.usuario = '';
+        this.titulo = '';
+        this.descricao = '';
+        this.nota = 0;
+        this.local = new Local();
+        this.data_hora = new Date();
+        this.ativo = false;
+    }
 
     uuid : string;
     usuario : string;

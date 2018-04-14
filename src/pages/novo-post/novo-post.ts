@@ -29,8 +29,10 @@ export class NovoPostPage {
       this._db        = this.navParams.get('db');
   }
 
-  public addNovoPost(){
-    console.log("addNovoPost()");
+  public addPost(){
+
+    console.log('Add Post Running...');
+    
     this._db.push(this.post);
 
     this.post = new Post();

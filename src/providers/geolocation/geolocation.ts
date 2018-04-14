@@ -48,16 +48,24 @@ export class GeolocationProvider {
     console.log('Get Address running...');
 
     let address : string = constantes.API_ADDRESS;
+    let latString : string = this._local.lat.toLocaleString();
+    let lngString : string = this._local.lng.toLocaleString();
     
-    address.replace( constantes.param1, this._local.lat.toString() );
-    address.replace( constantes.param2, this._local.lng.toString() );
-    address.replace( constantes.param3, mapkey.key );
+    latString = latString.replace(',', '.');
+    lngString = lngString.replace(',', '.');
+
+    address = address.replace( '$1', latString );
+    address = address.replace( '$2', lngString );
+    address = address.replace( '$3', mapkey.key );
 
     console.log(address);
 
     this._http.get( address, {}, {} )
       .then((data) => {
         console.log(data);
+        /**
+         * Preencher endereço aqui
+         */
       })
       .catch((err) => {
         console.log(err);
