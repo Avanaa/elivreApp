@@ -1,8 +1,9 @@
-import { DateTime } from "ionic-angular";
 import { Local } from "./local";
 import { Avaliacao } from "./avaliacao";
 
 export class Post {
+
+    constructor(){}
 
     uuid : string;
     usuario : string;
@@ -10,7 +11,7 @@ export class Post {
     descricao : string;
     nota : number;
     local : Local;
-    data_hora : DateTime;
+    data_hora : Date;
     comentarios : Avaliacao[];
     ativo : boolean;
 }

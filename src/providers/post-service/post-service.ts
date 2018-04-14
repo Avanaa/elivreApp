@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 import { Post } from '../../models/post';
 import { firebaseConfig } from '../../util/config';
+import { Avaliacao } from '../../models/avaliacao';
 
 /*
   Generated class for the PostServiceProvider provider.
@@ -20,10 +21,10 @@ export class PostServiceProvider {
       .orderByChild('ativo')
       .equalTo(true);
 
-      this.list();
+      this._list();
   }
 
-  public list() : Post[] {
+  private _list() : Post[] {
     let posts : Post[];
     this._query.on('value', snapshot => {
       posts = snapshot.val()
@@ -46,6 +47,9 @@ export class PostServiceProvider {
 
   public push(post : Post) : void {
     post.ativo = true;
+    post.data_hora = new Date();
+    //post.data_hora = TENHO QUE COLOCAR DATA E HORA AQUI
+    post.comentarios = new Array<Avaliacao>();
     console.log(post);
     firebase.database().ref('/posts').push(post);
   }

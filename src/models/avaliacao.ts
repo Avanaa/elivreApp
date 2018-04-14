@@ -1,10 +1,10 @@
-import { DateTime } from "ionic-angular";
-
 export class Avaliacao {
+    
+    constructor(){}
     
     uuid : string;
     usuario : string;
     descricao : string;
-    data_hora : DateTime;
+    data_hora : Date;
     nota : number;
 }

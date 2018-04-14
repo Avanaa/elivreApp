@@ -1,5 +1,7 @@
 export class Local {
 
+    constructor(){}
+
     lat : Float32Array;
     lng : Float32Array;
     rua : string;
