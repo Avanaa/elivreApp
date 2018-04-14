@@ -25,9 +25,10 @@ export class PostServiceProvider {
   }
 
   private _list() : Post[] {
-    let posts : Post[];
+    let posts : Post[] = new Array<Post>();
     this._query.on('value', snapshot => {
-      posts = snapshot.val()
+      //posts = snapshot.val()
+      console.log(snapshot.val());
     });
     return posts;
   }
@@ -48,7 +49,6 @@ export class PostServiceProvider {
   public push(post : Post) : void {
     post.ativo = true;
     post.data_hora = new Date();
-    //post.data_hora = TENHO QUE COLOCAR DATA E HORA AQUI
     post.comentarios = new Array<Avaliacao>();
     console.log(post);
     firebase.database().ref('/posts').push(post);

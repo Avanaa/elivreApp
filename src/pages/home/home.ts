@@ -3,6 +3,8 @@ import { NavController, Platform } from 'ionic-angular';
 import { NovoPostPage } from '../novo-post/novo-post';
 import { Local } from '../../models/local';
 import { FeedPage } from '../feed/feed';
+import { GeolocationProvider } from '../../providers/geolocation/geolocation';
+import { PostServiceProvider } from '../../providers/post-service/post-service';
    
 declare var google : any;
 
@@ -15,19 +17,29 @@ export class HomePage {
 
     @ViewChild('map') mapElement : ElementRef;
     public map : any;
-    public local : Local;
 
     constructor( public  navCtrl: NavController, 
-        public  platform        : Platform ) {
+        public  platform     : Platform,
+        private _geolocation : GeolocationProvider,
+        private _db          : PostServiceProvider ) {
 
-            this.local = new Local();
-            platform.ready().then(() => { this.initMap() });
+            platform.ready().then(() => { 
+                this._geolocation.getCurrentPosition()
+                    .then(() => {
+                        this.initMap();
+                    })
+                });
     }
 
     initMap(){
+
+        console.log('Init Map Running...');
+
         this.map = new google.maps.Map( this.mapElement.nativeElement , {
             zoom : 16,
-            center : { lat:41.85, lng:-87.65 }
+            center : { 
+                lat: this._geolocation.getLocal().lat,
+                lng: this._geolocation.getLocal().lng }
         });
     }
 
@@ -36,7 +48,10 @@ export class HomePage {
     }
 
     public novoPost(){
-        this.navCtrl.push( NovoPostPage, { 'local' : this.local } );
+        this.navCtrl.push( NovoPostPage, {
+            'local' : this._geolocation.getLocal(),
+            'db' : this._db
+        } );
     }
 
     public feed(){

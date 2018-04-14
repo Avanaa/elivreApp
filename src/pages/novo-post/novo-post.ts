@@ -18,14 +18,15 @@ import { PostServiceProvider } from '../../providers/post-service/post-service';
 export class NovoPostPage {
 
   public post : Post;
+  private _db : PostServiceProvider;
 
   constructor(public navCtrl: NavController, 
-    public navParams: NavParams,
-    public alertCtrl : AlertController,
-    private _db : PostServiceProvider ) {
+    public navParams        : NavParams,
+    public alertCtrl        : AlertController) {
 
-      this.post = new Post();
+      this.post       = new Post();
       this.post.local = this.navParams.get('local');
+      this._db        = this.navParams.get('db');
   }
 
   public addNovoPost(){

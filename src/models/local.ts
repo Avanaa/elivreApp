@@ -2,8 +2,8 @@ export class Local {
 
     constructor(){}
 
-    lat : Float32Array;
-    lng : Float32Array;
+    lat : number;
+    lng : number;
     rua : string;
     numero : number;
     bairro : string;
