@@ -6,7 +6,8 @@ import { FeedPage } from '../feed/feed';
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
 import { PostServiceProvider } from '../../providers/post-service/post-service';
 import { Post } from '../../models/post';
-   
+import * as MarkerClusterer from 'node-js-marker-clusterer';
+
 declare var google : any;
 
 @Component({
@@ -19,6 +20,7 @@ export class HomePage implements OnInit {
     @ViewChild('map') mapElement : ElementRef;
     public map : any;
     public list : Post[];
+    public markerClusterer : MarkerClusterer;
 
     constructor( public navCtrl : NavController, 
         public  platform        : Platform,
@@ -33,7 +35,7 @@ export class HomePage implements OnInit {
         this._geolocation.getCurrentPosition()
         .then((success) => {
             this.initMap();
-            this.list.forEach((post) => { this.addMarker(post) });
+            this.createMarkerClusterer();
         });
     }
 
@@ -49,19 +51,32 @@ export class HomePage implements OnInit {
         });
     }
 
-    public addMarker(post : Post){
+    public createMarkerClusterer(){
 
-        console.log('Add Marker Running...');
+        console.log('Add MarkerClusterer Running...');
 
-        let marker : google.maps.Marker = new google.maps.Marker({
-            position    : new google.maps.LatLng(post.local.lat, post.local.lng),
-            map         : this.map,
-            icon        : {
-                'url' : 'assets/icon/cone.png'
-            },
-            animation   : google.maps.Animation.DROP
+        let markers = new Array<any>();
+        
+        this.list.forEach((post) => {
+            let marker : google.maps.Marker = this.createMarker(post)
+            markers.push(marker);
         });
+        
+        this.markerClusterer = new MarkerClusterer(this.map, markers, {
+            imagePath : 'assets/icon/m1.png'
+        });
+    }
 
+    public createMarker(post : Post) : google.maps.Marker {
+
+        console.log('Create Marker Running...');
+        
+        let marker : google.maps.Marker;    
+
+        marker = new google.maps.Marker({
+            position    : new google.maps.LatLng(post.local.lat, post.local.lng),
+        });
+        /*
         let infowindow : google.maps.InfoWindow = new google.maps.InfoWindow({
             content : post.descricao
         });
@@ -69,6 +84,8 @@ export class HomePage implements OnInit {
         marker.addListener('click', () => {
             infowindow.open(this.map, marker);
         });
+        */
+        return marker;
     }
 
     public newPost(){
