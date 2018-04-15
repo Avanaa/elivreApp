@@ -7,6 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { MyApp } from './app.component';
 
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
 
 /**
  * Pages
@@ -21,7 +22,7 @@ import { FeedPage } from '../pages/feed/feed';
 import { PostServiceProvider } from '../providers/post-service/post-service';
 import { GeolocationProvider } from '../providers/geolocation/geolocation';
 import { Geolocation } from '@ionic-native/geolocation';
-import { HTTP } from '@ionic-native/http';
+import { HttpModule } from '@angular/http';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { HTTP } from '@ionic-native/http';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    HttpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -45,8 +47,8 @@ import { HTTP } from '@ionic-native/http';
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
+    HttpModule,
     Geolocation,
-    HTTP,
     PostServiceProvider,
     GeolocationProvider
   ]

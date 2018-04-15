@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Http, Headers, RequestOptions } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Local } from '../../models/local';
-import { HTTP } from '@ionic-native/http';
 import { constantes } from '../../util/constantes';
 import { mapkey } from '../../util/mapconfig';
 
@@ -16,7 +16,7 @@ export class GeolocationProvider {
 
   private _local : Local;
 
-  constructor( private _geolocation : Geolocation, private _http : HTTP ) {
+  constructor( private _geolocation : Geolocation, private _http : Http ) {
     this._local = new Local();
   }
 
@@ -35,7 +35,7 @@ export class GeolocationProvider {
 
       console.log(data);
 
-      this.getAddress();
+      //return this.getAddress();
     })
     .catch((err) => {
       console.log(err);
@@ -43,9 +43,22 @@ export class GeolocationProvider {
 
   }
 
-  public getAddress(){
+  public getAddress() : Promise<any> {
     
     console.log('Get Address running...');
+
+    let headers : Headers;
+    let options : RequestOptions;
+
+    headers = new Headers({ 
+      'Content-Type'                      : 'application/json',
+      'Access-Control-Allow-Origin'       : '*',
+      'Access-Control-Allow-Headers'      : 'Content-Type,Authorization,Upgrade-Insecure-Requests',
+      'Access-Control-Allow-Credentials'  : true,
+      'Access-Control-Allow-Methods'      : 'GET'
+    });
+
+    options = new RequestOptions({headers : headers});
 
     let address : string = constantes.API_ADDRESS;
     let latString : string = this._local.lat.toLocaleString();
@@ -59,17 +72,8 @@ export class GeolocationProvider {
     address = address.replace( '$3', mapkey.key );
 
     console.log(address);
-
-    this._http.get( address, {}, {} )
-      .then((data) => {
-        console.log(data);
-        /**
-         * Preencher endereço aqui
-         */
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    
+    return this._http.get( address, options ).toPromise();
   }
 
   public getLocal() : Local {
