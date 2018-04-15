@@ -94,4 +94,10 @@
         <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="To locate you" />
     </plugin>
     <plugin name="cordova-plugin-advanced-http" spec="^1.11.1" />
+    <plugin name="cordova-plugin-googlemaps" spec="^2.2.9">
+        <variable name="API_KEY_FOR_ANDROID" value="AIzaSyD2r9QkVocR9cDSdLCx752TG89kyVG-dio" />
+        <variable name="API_KEY_FOR_IOS" value="AIzaSyC8l_hVSQ5wQ5-ZlQVep4x-2wJsA4QPwRI" />
+        <variable name="PLAY_SERVICES_VERSION" value="12.0.0" />
+        <variable name="ANDROID_SUPPORT_V4_VERSION" value="24.1.0" />
+    </plugin>
 </widget>

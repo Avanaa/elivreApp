@@ -12,10 +12,14 @@
 
 <ion-content padding>
     <form>
-        <ion-item>
-          <ion-label>Descrição</ion-label>
-          <ion-textarea [(ngModel)]="post.descricao" name="descricao" ></ion-textarea>
-        </ion-item>
+      <ion-item>
+        <ion-label>Titulo</ion-label>
+        <ion-input type="text" [(ngModel)]="post.titulo" name="titulo" ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Descrição</ion-label>
+        <ion-textarea [(ngModel)]="post.descricao" name="descricao" ></ion-textarea>
+      </ion-item>
         <button ion-button block (click)="addPost()">enviar</button>
     </form>
 </ion-content>

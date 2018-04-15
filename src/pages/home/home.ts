@@ -6,7 +6,7 @@ import { FeedPage } from '../feed/feed';
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
 import { PostServiceProvider } from '../../providers/post-service/post-service';
 import { Post } from '../../models/post';
-import * as MarkerClusterer from 'node-js-marker-clusterer';
+import { GoogleMap, GoogleMaps, GoogleMapOptions, LatLng, GoogleMapsEvent, MarkerOptions } from '@ionic-native/google-maps';
 
 declare var google : any;
 
@@ -18,80 +18,75 @@ declare var google : any;
 export class HomePage implements OnInit {
 
     @ViewChild('map') mapElement : ElementRef;
-    public map : any;
+    //public map : any;
+    public map : GoogleMap;
     public list : Post[];
-    public markerClusterer : MarkerClusterer;
+    //public markerClusterer : MarkerClusterer;
 
     constructor( public navCtrl : NavController, 
         public  platform        : Platform,
         private _geolocation    : GeolocationProvider,
-        private _db             : PostServiceProvider ) {}
+        private _db             : PostServiceProvider,
+        private _googleMaps     : GoogleMaps ) {}
 
 
     ngOnInit(): void {
 
         this.list = this._db.getList();
-
+        
         this._geolocation.getCurrentPosition()
         .then((success) => {
             this.initMap();
-            this.createMarkerClusterer();
         });
     }
 
-    public initMap(){
+    initMap(){
+        let element = this.mapElement.nativeElement;
 
-        console.log('Init Map Running...');
+        let options : GoogleMapOptions = {
+            mapType : 'MAP_TYPE_ROADMAP',
+            controls : {
+                compass : true,
+                myLocation : true,
+                myLocationButton : true,
+                mapToolbar : true
+            },
+            camera : {
+                target : {
+                    lat: this._geolocation.getLocal().lat,
+                    lng: this._geolocation.getLocal().lng,
+                },
+                zoom : 18
+            }
+        };
 
-        this.map = new google.maps.Map( this.mapElement.nativeElement , {
-            zoom    : 18,
-            center  : { 
-                lat : this._geolocation.getLocal().lat,
-                lng : this._geolocation.getLocal().lng }
-        });
+        this.map = this._googleMaps.create(element, options);
+        this.map.on(GoogleMapsEvent.MAP_READY)
+            .subscribe(() => {
+                this.createMarkers();
+            })
     }
 
-    public createMarkerClusterer(){
-
-        console.log('Add MarkerClusterer Running...');
-
-        let markers = new Array<any>();
-        
+    createMarkers(){
         this.list.forEach((post) => {
-            let marker : google.maps.Marker = this.createMarker(post)
-            markers.push(marker);
-        });
-        
-        this.markerClusterer = new MarkerClusterer(this.map, markers, {
-            imagePath : 'assets/icon/m1.png'
-        });
-    }
+            
+            let local : LatLng = new LatLng(post.local.lat, post.local.lng);
+            
+            let options : MarkerOptions = {
+                position : local,
+                icon : 'red',
+                animation : 'DROP'
+            };
 
-    public createMarker(post : Post) : google.maps.Marker {
-
-        console.log('Create Marker Running...');
-        
-        let marker : google.maps.Marker;    
-
-        marker = new google.maps.Marker({
-            position    : new google.maps.LatLng(post.local.lat, post.local.lng),
+            this.map.addMarker(options);
         });
-        /*
-        let infowindow : google.maps.InfoWindow = new google.maps.InfoWindow({
-            content : post.descricao
-        });
-
-        marker.addListener('click', () => {
-            infowindow.open(this.map, marker);
-        });
-        */
-        return marker;
     }
 
     public newPost(){
-
+        
+        let local : LatLng = new LatLng(this._geolocation.getLocal().lat, this._geolocation.getLocal().lng);
         this.navCtrl.push( NovoPostPage, {
-            'local' : this._geolocation.getLocal(),
+            'local' : local,
             'db'    : this._db
         });
     }

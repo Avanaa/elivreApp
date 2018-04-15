@@ -22,6 +22,7 @@ import { FeedPage } from '../pages/feed/feed';
 import { PostServiceProvider } from '../providers/post-service/post-service';
 import { GeolocationProvider } from '../providers/geolocation/geolocation';
 import { Geolocation } from '@ionic-native/geolocation';
+import { GoogleMaps } from '@ionic-native/google-maps';
 import { HttpModule } from '@angular/http';
 
 @NgModule({
@@ -48,6 +49,7 @@ import { HttpModule } from '@angular/http';
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     HttpModule,
+    GoogleMaps,
     Geolocation,
     PostServiceProvider,
     GeolocationProvider
