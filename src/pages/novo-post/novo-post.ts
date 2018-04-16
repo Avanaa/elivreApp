@@ -24,28 +24,23 @@ export class NovoPostPage {
     public post : Post;
     private _db : DaoProvider;
 
-    constructor(public navCtrl: NavController, 
-        public navParams        : NavParams,
-        public alertCtrl        : AlertController) {
+    constructor(
+        public navCtrl      : NavController, 
+        public navParams    : NavParams,
+        public alertCtrl    : AlertController) {
 
-        this.post     = new Post();
-        this._db      = this.navParams.get('db');
-        let data      = this.navParams.get('data');
-        let dataJson  = JSON.parse(data.totring());
-      
-        let alert = alertCtrl.create({
-            title : 'Dados em Json:',
-            subTitle : dataJson,
-            buttons : ['Ok']
-        });
-        alert.present();
-
-        this.post.local.lat = dataJson.lat;
-        this.post.local.lng = dataJson.lng;
+        this.post = new Post();
+        this._db  = this.navParams.get('db');
+        let data  = this.navParams.get('data');
+        
+        this.post.local.lat = data.lat;
+        this.post.local.lng = data.lng;
+        
     }
 
     public addPost(){
         console.log('Add Post Running...');
+
         this._db.push(this.post);
         this.navCtrl.pop();
     }

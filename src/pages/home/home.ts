@@ -12,6 +12,7 @@ import {
     MarkerOptions
     } from '@ionic-native/google-maps';
 import { DaoProvider } from '../../providers/dao/dao';
+import { Local } from '../../models/local';
 
 @Component({
     selector: 'page-home',
@@ -23,7 +24,7 @@ export class HomePage implements OnInit {
     @ViewChild('map') mapElement    : ElementRef;
     public map                      : GoogleMap;
     public list                     : Post[];
-    public currentLocation          : LatLng;
+    public currentLocation          : Local;
 
     constructor( 
         public navCtrl          : NavController, 
@@ -40,16 +41,20 @@ export class HomePage implements OnInit {
         console.log(this.list);
         this._geolocation.getCurrentPosition()
         .then((data) => {
+
+            // Comentar depois que localização for retornada pelo click no mapa
+            this.currentLocation.lat = data.coords.latitude;
+            this.currentLocation.lng = data.coords.longitude;
+
             this.initMap(data);
         })
         .catch((err) => {
             let alert : Alert = this.alertCtrl.create({
                 title : 'Erro na localização',
-                subTitle : 'Verifique se seu GPS está ativo',
+                subTitle : 'Verifique conexão com a internet e GPS',
                 buttons : ['Ok']
             });
             alert.present();
-            this.platform.exitApp();
         });
     }
 
@@ -82,11 +87,7 @@ export class HomePage implements OnInit {
                 this.createMarkers();
 
                 this.map.on(GoogleMapsEvent.MAP_CLICK)
-                    .subscribe((data) =>{
-                        let alert = this.alertCtrl.create({
-                            title : 'Click!',
-                            buttons : ['Ok']
-                        })
+                    .subscribe((data : LatLng) =>{
                         this.newPost(data);
                     });
             })
@@ -106,10 +107,19 @@ export class HomePage implements OnInit {
         });
     }
 
-    newPost(data){
+    newPost(data : LatLng){
+
+        // Descomentar depois que localização for retornada pelo click no mapa
+        /*
         this.navCtrl.push(NovoPostPage, {
             'data' : data,
             'db'  : this._db
+        });
+        */
+       
+       this.navCtrl.push(NovoPostPage, {
+        'data' : this.currentLocation,
+        'db'  : this._db
         });
     }
 }
