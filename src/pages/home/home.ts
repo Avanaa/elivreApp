@@ -38,11 +38,12 @@ export class HomePage implements OnInit {
     ngOnInit() : void {
 
         this.list = this._db.list();
-        console.log(this.list);
+        
         this._geolocation.getCurrentPosition()
         .then((data) => {
 
             // Comentar depois que localização for retornada pelo click no mapa
+            this.currentLocation = new Local();
             this.currentLocation.lat = data.coords.latitude;
             this.currentLocation.lng = data.coords.longitude;
 

@@ -35,7 +35,6 @@ export class NovoPostPage {
         
         this.post.local.lat = data.lat;
         this.post.local.lng = data.lng;
-        
     }
 
     public addPost(){

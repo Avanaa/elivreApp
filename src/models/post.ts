@@ -12,6 +12,7 @@ export class Post {
         this.nota = 0;
         this.data_hora = new Date();
         this.ativo = false;
+        this.local = new Local();
     }
 
     public local : Local;
