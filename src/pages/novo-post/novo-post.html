@@ -12,14 +12,37 @@
 
 <ion-content padding>
     <form>
-      <ion-item>
-        <ion-label>Titulo</ion-label>
-        <ion-input type="text" [(ngModel)]="post.titulo" name="titulo" ></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Descrição</ion-label>
-        <ion-textarea [(ngModel)]="post.descricao" name="descricao" ></ion-textarea>
-      </ion-item>
-        <button ion-button block (click)="addPost()">enviar</button>
+
+        <ion-item>
+            <ion-label>Titulo</ion-label>
+            <ion-input type="text" [(ngModel)]="post.titulo" name="titulo" ></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label>Descrição</ion-label>
+            <ion-textarea [(ngModel)]="post.descricao" name="descricao" ></ion-textarea>
+        </ion-item>
+        
+        <ion-item>
+            <div class="rating-stars">
+
+                <label for="star-1" icon-only ><ion-icon name="star" class="rs"></ion-icon></label>
+                <input type="radio" [(ngModel)]="post.nota" id="star-1" name="nota" value="1" checked/>
+                
+                <label for="star-2" icon-only><ion-icon name="star" class="rs"></ion-icon></label>
+                <input type="radio" [(ngModel)]="post.nota" id="star-2" name="nota" value="2"/>
+                
+                <label for="star-3" icon-only><ion-icon name="star" class="rs"></ion-icon></label>
+                <input type="radio" [(ngModel)]="post.nota" id="star-3" name="nota" value="3"/>
+                
+                <label for="star-4" icon-only><ion-icon name="star" class="rs"></ion-icon></label>
+                <input type="radio" [(ngModel)]="post.nota" id="star-4" name="nota" value="4"/>
+                
+                <label for="star-5" icon-only><ion-icon name="star" class="rs"></ion-icon></label>
+                <input type="radio" [(ngModel)]="post.nota" id="star-5" name="nota" value="5"/>
+            </div>
+        </ion-item>
+        
+        <button ion-button block (click)="addPost()">Enviar</button>
     </form>
 </ion-content>

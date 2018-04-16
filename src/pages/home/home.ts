@@ -1,14 +1,17 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { NavController, Platform } from 'ionic-angular';
+import { NavController, Platform, AlertController, Alert } from 'ionic-angular';
 import { NovoPostPage } from '../novo-post/novo-post';
-import { Local } from '../../models/local';
-import { FeedPage } from '../feed/feed';
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
-import { PostServiceProvider } from '../../providers/post-service/post-service';
 import { Post } from '../../models/post';
-import { GoogleMap, GoogleMaps, GoogleMapOptions, LatLng, GoogleMapsEvent, MarkerOptions } from '@ionic-native/google-maps';
-
-declare var google : any;
+import { 
+    GoogleMap, 
+    GoogleMaps, 
+    GoogleMapOptions, 
+    LatLng, 
+    GoogleMapsEvent, 
+    MarkerOptions
+    } from '@ionic-native/google-maps';
+import { DaoProvider } from '../../providers/dao/dao';
 
 @Component({
     selector: 'page-home',
@@ -17,30 +20,41 @@ declare var google : any;
 
 export class HomePage implements OnInit {
 
-    @ViewChild('map') mapElement : ElementRef;
-    //public map : any;
-    public map : GoogleMap;
-    public list : Post[];
-    //public markerClusterer : MarkerClusterer;
+    @ViewChild('map') mapElement    : ElementRef;
+    public map                      : GoogleMap;
+    public list                     : Post[];
+    public currentLocation          : LatLng;
 
-    constructor( public navCtrl : NavController, 
+    constructor( 
+        public navCtrl          : NavController, 
+        public alertCtrl        : AlertController,
         public  platform        : Platform,
         private _geolocation    : GeolocationProvider,
-        private _db             : PostServiceProvider,
-        private _googleMaps     : GoogleMaps ) {}
+        private _db             : DaoProvider,
+        private _googleMaps     : GoogleMaps
+    ){}
 
+    ngOnInit() : void {
 
-    ngOnInit(): void {
-
-        this.list = this._db.getList();
-        
+        this.list = this._db.list();
+        console.log(this.list);
         this._geolocation.getCurrentPosition()
-        .then((success) => {
-            this.initMap();
+        .then((data) => {
+            this.initMap(data);
+        })
+        .catch((err) => {
+            let alert : Alert = this.alertCtrl.create({
+                title : 'Erro na localização',
+                subTitle : 'Verifique se seu GPS está ativo',
+                buttons : ['Ok']
+            });
+            alert.present();
+            this.platform.exitApp();
         });
     }
 
-    initMap(){
+    initMap(data : any){
+        
         let element = this.mapElement.nativeElement;
 
         let options : GoogleMapOptions = {
@@ -53,41 +67,49 @@ export class HomePage implements OnInit {
             },
             camera : {
                 target : {
-                    lat: this._geolocation.getLocal().lat,
-                    lng: this._geolocation.getLocal().lng,
+                    lat: data.coords.latitude,
+                    lng: data.coords.longitude,
                 },
                 zoom : 18
             }
         };
 
         this.map = this._googleMaps.create(element, options);
+        
         this.map.on(GoogleMapsEvent.MAP_READY)
             .subscribe(() => {
+                
                 this.createMarkers();
+
+                this.map.on(GoogleMapsEvent.MAP_CLICK)
+                    .subscribe((data) =>{
+                        let alert = this.alertCtrl.create({
+                            title : 'Click!',
+                            buttons : ['Ok']
+                        })
+                        this.newPost(data);
+                    });
             })
     }
 
     createMarkers(){
         this.list.forEach((post) => {
             
-            let local : LatLng = new LatLng(post.local.lat, post.local.lng);
-            
             let options : MarkerOptions = {
-                position : local,
-                icon : 'red',
-                animation : 'DROP'
+                position : new LatLng(post.local.lat, post.local.lng),
+                icon : 'blue',
+                animation : 'DROP',
+                disableAutoPan : false,
+                title : post.titulo
             };
-
             this.map.addMarker(options);
         });
     }
 
-    public newPost(){
-        
-        let local : LatLng = new LatLng(this._geolocation.getLocal().lat, this._geolocation.getLocal().lng);
-        this.navCtrl.push( NovoPostPage, {
-            'local' : local,
-            'db'    : this._db
+    newPost(data){
+        this.navCtrl.push(NovoPostPage, {
+            'data' : data,
+            'db'  : this._db
         });
     }
 }

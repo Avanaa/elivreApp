@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, 
+  NavController, 
+  NavParams, 
+  AlertController
+} from 'ionic-angular';
 import { Post } from '../../models/post';
-import { PostServiceProvider } from '../../providers/post-service/post-service';
-import { LatLng } from '@ionic-native/google-maps';
-import { Local } from '../../models/local';
+import { DaoProvider } from '../../providers/dao/dao';
 
 /**
  * Generated class for the NovoPostPage page.
@@ -19,35 +21,32 @@ import { Local } from '../../models/local';
 })
 export class NovoPostPage {
 
-  public post : Post;
-  private _db : PostServiceProvider;
-  public latLng : LatLng;
+    public post : Post;
+    private _db : DaoProvider;
 
-  constructor(public navCtrl: NavController, 
-    public navParams        : NavParams,
-    public alertCtrl        : AlertController) {
+    constructor(public navCtrl: NavController, 
+        public navParams        : NavParams,
+        public alertCtrl        : AlertController) {
 
-      this.post   = new Post();
-      this.latLng = this.navParams.get('local');
-      this._db    = this.navParams.get('db');
-  }
+        this.post     = new Post();
+        this._db      = this.navParams.get('db');
+        let data      = this.navParams.get('data');
+        let dataJson  = JSON.parse(data.totring());
+      
+        let alert = alertCtrl.create({
+            title : 'Dados em Json:',
+            subTitle : dataJson,
+            buttons : ['Ok']
+        });
+        alert.present();
 
-  public addPost(){
+        this.post.local.lat = dataJson.lat;
+        this.post.local.lng = dataJson.lng;
+    }
 
-    console.log('Add Post Running...');
-
-    this.post.local.lat = this.latLng.lat;
-    this.post.local.lng = this.latLng.lng;
-
-    this._db.push(this.post);
-
-    let alert = this.alertCtrl.create({
-      title : 'Criado',
-      subTitle : 'Novo post criado com sucesso!',
-      buttons : ['Ok']
-    });
-    alert.present();
-
-    this.navCtrl.pop();
-  }
+    public addPost(){
+        console.log('Add Post Running...');
+        this._db.push(this.post);
+        this.navCtrl.pop();
+    }
 }

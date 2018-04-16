@@ -2,53 +2,41 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 import { Post } from '../../models/post';
 import { firebaseConfig } from '../../util/config';
-import { Avaliacao } from '../../models/avaliacao';
-import { Local } from '../../models/local';
-
+import { LatLng } from '@ionic-native/google-maps';
 /*
-  Generated class for the PostServiceProvider provider.
+  Generated class for the DaoProvider provider.
 
   See https://angular.io/guide/dependency-injection for more info on providers
   and Angular DI.
 */
 @Injectable()
-export class PostServiceProvider {
+export class DaoProvider {
 
-  private _query : firebase.database.Query;
-  private _ref   : firebase.database.Reference;
   private _posts : Post[];
 
   constructor() {
-
     firebase.initializeApp(firebaseConfig);
-
-    this._ref = firebase.database().ref('/posts');
-    this._query = this._ref.orderByChild('ativo').equalTo(true);
-    this.list();
-  
-    }
-
-  public getList() {
-    return this._posts;
   }
-
-  private list() {
+  
+  public list() : Post[] {
 
     this._posts = new Array<Post>();
 
-    this._query.on('value', snapshot => {
+    firebase.database().ref('/posts').on('value', snapshot => {
       this.convert(snapshot);
     });
+
+    return this._posts;
   }
 
   public update(post : Post) : void {
     if(post){
-      this._ref.update(post)
+      firebase.database().ref('/posts').update(post)
     }
   }
 
   public set(post : Post) : void {
-    this._ref.set({
+    firebase.database().ref('/posts').set({
       uuid : post.uuid,
       value : post
     });
@@ -58,13 +46,13 @@ export class PostServiceProvider {
     post.ativo    = true;
     post.data_hora = new Date();
 
-    this._ref.push(post);
+    firebase.database().ref('/posts').push(post);
   }
 
   public get(uuid : string){
     let post : Post = new Post();
     if(uuid){
-      let query = this._ref.orderByChild('uuid').equalTo(uuid);
+      let query = firebase.database().ref('/posts').orderByChild('uuid').equalTo(uuid);
       query.on('value', snapshot =>{
         /**
          * ...
@@ -75,7 +63,7 @@ export class PostServiceProvider {
   }
 
   public delete(post : Post){
-    this._ref.set({
+    firebase.database().ref('/posts').set({
       uuid : post.uuid,
       ativo : false
     });
@@ -86,28 +74,15 @@ export class PostServiceProvider {
     snapshot.forEach(childSnapshot => {
     
     let post  : Post  = new Post();
-    let local : Local = new Local();
 
-    local.rua       = childSnapshot.val().local.rua;
-    local.numero    = childSnapshot.val().local.numero;
-    local.bairro    = childSnapshot.val().local.bairro;
-    local.cidade    = childSnapshot.val().local.cidade;
-    local.estado    = childSnapshot.val().local.estado;
-    local.pais      = childSnapshot.val().local.pais;
-    local.lat       = childSnapshot.val().local.lat;
-    local.lng       = childSnapshot.val().local.lng;
-
-    post.uuid       = childSnapshot.val().uuid
     post.titulo     = childSnapshot.val().titulo;
     post.descricao  = childSnapshot.val().descricao;
     post.ativo      = childSnapshot.val().ativo;
     post.data_hora  = childSnapshot.val().data_hora;
-
-    post.local      = local;
+    post.local      = new LatLng(childSnapshot.val().local.lat, childSnapshot.val().local.lng);
 
     this._posts.push(post);
 
     });
   }
-
 }

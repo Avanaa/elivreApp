@@ -6,53 +6,44 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
-
 /**
  * Pages
  */
 import { HomePage } from '../pages/home/home';
 import { NovoPostPage } from '../pages/novo-post/novo-post';
-import { FeedPage } from '../pages/feed/feed';
 
 /**
  * Providers
  */
-import { PostServiceProvider } from '../providers/post-service/post-service';
-import { GeolocationProvider } from '../providers/geolocation/geolocation';
 import { Geolocation } from '@ionic-native/geolocation';
+import { GeolocationProvider } from '../providers/geolocation/geolocation';
 import { GoogleMaps } from '@ionic-native/google-maps';
-import { HttpModule } from '@angular/http';
+import { DaoProvider } from '../providers/dao/dao';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    NovoPostPage,
-    FeedPage
+    NovoPostPage
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp),
-    HttpModule
+    IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
     HomePage,
-    NovoPostPage,
-    FeedPage
+    NovoPostPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    HttpModule,
-    GoogleMaps,
     Geolocation,
-    PostServiceProvider,
-    GeolocationProvider
+    GeolocationProvider,
+    GoogleMaps,
+    DaoProvider
   ]
 })
 export class AppModule {}
