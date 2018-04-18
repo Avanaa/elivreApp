@@ -24,7 +24,6 @@ export class HomePage implements OnInit {
     @ViewChild('map') mapElement    : ElementRef;
     public map                      : GoogleMap;
     public list                     : Post[];
-    public currentLocation          : Local;
 
     constructor( 
         public navCtrl          : NavController, 
@@ -42,20 +41,18 @@ export class HomePage implements OnInit {
         this._geolocation.getCurrentPosition()
         .then((data) => {
 
-            // Comentar depois que localização for retornada pelo click no mapa
-            this.currentLocation = new Local();
-            this.currentLocation.lat = data.coords.latitude;
-            this.currentLocation.lng = data.coords.longitude;
-
             this.initMap(data);
+
         })
         .catch((err) => {
+
             let alert : Alert = this.alertCtrl.create({
                 title : 'Erro na localização',
                 subTitle : 'Verifique conexão com a internet e GPS',
                 buttons : ['Ok']
             });
             alert.present();
+
         });
     }
 
@@ -69,7 +66,7 @@ export class HomePage implements OnInit {
                 compass : true,
                 myLocation : true,
                 myLocationButton : true,
-                mapToolbar : true
+                mapToolbar : true,
             },
             camera : {
                 target : {
@@ -89,12 +86,20 @@ export class HomePage implements OnInit {
 
                 this.map.on(GoogleMapsEvent.MAP_CLICK)
                     .subscribe((data : LatLng) =>{
-                        this.newPost(data);
+
+                        let dataJson = JSON.parse(data.toString());
+                        
+                        let local : Local = new Local();
+                        local.lat = dataJson.lat;
+                        local.lng = dataJson.lng;
+
+                        this.newPost(local);
                     });
-            })
+            });
     }
 
     createMarkers(){
+        
         this.list.forEach((post) => {
             
             let options : MarkerOptions = {
@@ -108,18 +113,10 @@ export class HomePage implements OnInit {
         });
     }
 
-    newPost(data : LatLng){
-
-        // Descomentar depois que localização for retornada pelo click no mapa
-        /*
-        this.navCtrl.push(NovoPostPage, {
-            'data' : data,
-            'db'  : this._db
-        });
-        */
+    newPost(data : Local){
        
-       this.navCtrl.push(NovoPostPage, {
-        'data' : this.currentLocation,
+       this.navCtrl.setRoot(NovoPostPage, {
+        'data' : data,
         'db'  : this._db
         });
     }

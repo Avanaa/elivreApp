@@ -6,6 +6,8 @@ import { IonicPage,
 } from 'ionic-angular';
 import { Post } from '../../models/post';
 import { DaoProvider } from '../../providers/dao/dao';
+import { HomePage } from '../home/home';
+import { Local } from '../../models/local';
 
 /**
  * Generated class for the NovoPostPage page.
@@ -31,7 +33,7 @@ export class NovoPostPage {
 
         this.post = new Post();
         this._db  = this.navParams.get('db');
-        let data  = this.navParams.get('data');
+        let data : Local = this.navParams.get('data');
         
         this.post.local.lat = data.lat;
         this.post.local.lng = data.lng;
@@ -41,6 +43,6 @@ export class NovoPostPage {
         console.log('Add Post Running...');
 
         this._db.push(this.post);
-        this.navCtrl.pop();
+        this.navCtrl.setRoot(HomePage);
     }
 }

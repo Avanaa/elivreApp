@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 import { Post } from '../../models/post';
 import { firebaseConfig } from '../../util/config';
-import { LatLng } from '@ionic-native/google-maps';
 /*
   Generated class for the DaoProvider provider.
 
@@ -79,7 +78,8 @@ export class DaoProvider {
     post.descricao  = childSnapshot.val().descricao;
     post.ativo      = childSnapshot.val().ativo;
     post.data_hora  = childSnapshot.val().data_hora;
-    post.local      = new LatLng(childSnapshot.val().local.lat, childSnapshot.val().local.lng);
+    post.local.lat  = childSnapshot.val().local.lat;
+    post.local.lng  = childSnapshot.val().local.lng;
 
     this._posts.push(post);
 
