@@ -11,6 +11,7 @@ import { MyApp } from './app.component';
  */
 import { HomePage } from '../pages/home/home';
 import { NovoPostPage } from '../pages/novo-post/novo-post';
+import { LerPostPage } from '../pages/ler-post/ler-post';
 
 /**
  * Providers
@@ -24,7 +25,8 @@ import { DaoProvider } from '../providers/dao/dao';
   declarations: [
     MyApp,
     HomePage,
-    NovoPostPage
+    NovoPostPage,
+    LerPostPage
   ],
   imports: [
     BrowserModule,
@@ -34,7 +36,8 @@ import { DaoProvider } from '../providers/dao/dao';
   entryComponents: [
     MyApp,
     HomePage,
-    NovoPostPage
+    NovoPostPage,
+    LerPostPage
   ],
   providers: [
     StatusBar,

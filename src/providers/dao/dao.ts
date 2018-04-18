@@ -12,11 +12,12 @@ import { firebaseConfig } from '../../util/config';
 export class DaoProvider {
 
   private _posts : Post[];
+  private _post: Post;
 
   constructor() {
     firebase.initializeApp(firebaseConfig);
   }
-  
+
   public list() : Post[] {
 
     this._posts = new Array<Post>();
@@ -48,17 +49,8 @@ export class DaoProvider {
     firebase.database().ref('/posts').push(post);
   }
 
-  public get(uuid : string){
-    let post : Post = new Post();
-    if(uuid){
-      let query = firebase.database().ref('/posts').orderByChild('uuid').equalTo(uuid);
-      query.on('value', snapshot =>{
-        /**
-         * ...
-         */
-      });
-      return post;
-    }
+  public get(uuid : string) : any {
+    return firebase.database().ref('posts/'+uuid).once('value');
   }
 
   public delete(post : Post){
@@ -69,11 +61,12 @@ export class DaoProvider {
   }
 
   private convert(snapshot : any) : void {
-    
+
     snapshot.forEach(childSnapshot => {
-    
+
     let post  : Post  = new Post();
 
+    post.uuid       = childSnapshot.key;
     post.titulo     = childSnapshot.val().titulo;
     post.descricao  = childSnapshot.val().descricao;
     post.ativo      = childSnapshot.val().ativo;
@@ -85,4 +78,19 @@ export class DaoProvider {
 
     });
   }
+
+  public convertPost(snapshot: any): Post {
+      let post: Post = new Post();
+      post.uuid = snapshot.key;
+      post.titulo = snapshot.val().titulo;
+      post.descricao = snapshot.val().descricao;
+      post.ativo = snapshot.val().ativo;
+      post.data_hora = snapshot.val().data_hora;
+      post.local.lat = (snapshot.val().local) ? snapshot.val().local.lat : null;
+      post.local.lng = (snapshot.val().local) ? snapshot.val().local.lng : null;
+
+      // this._post = post;
+      return post;
+  }
+
 }

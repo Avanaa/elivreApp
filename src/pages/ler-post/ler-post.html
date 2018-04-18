@@ -1,0 +1,46 @@
+<!--
+  Generated template for the NovoPostPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Post</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <div *ngIf="post">
+        <h2>Titulo</h2>
+        <p>{{ post.titulo }}</p>
+
+        <h2>Descrição</h2>
+        <p>{{ post.descricao }}</p>
+
+        <br>
+        <div class="rating-stars">
+
+            <label for="star-1" icon-only ><ion-icon name="star" class="rs"></ion-icon></label>
+            <input type="radio" id="star-1" name="nota" value="1" [checked]="post.nota === 1"/>
+
+            <label for="star-2" icon-only><ion-icon name="star" class="rs"></ion-icon></label>
+            <input type="radio" id="star-2" name="nota" value="2" [checked]="post.nota === 2"/>
+
+            <label for="star-3" icon-only><ion-icon name="star" class="rs"></ion-icon></label>
+            <input type="radio" id="star-3" name="nota" value="3" [checked]="post.nota === 3"/>
+
+            <label for="star-4" icon-only><ion-icon name="star" class="rs"></ion-icon></label>
+            <input type="radio" id="star-4" name="nota" value="4" [checked]="post.nota === 4"/>
+
+            <label for="star-5" icon-only><ion-icon name="star" class="rs"></ion-icon></label>
+            <input type="radio" id="star-5" name="nota" value="5" [checked]="post.nota === 5"/>
+        </div>
+
+        <br><br>
+        <button ion-button block (click)="goHome()">Voltar</button>
+
+  </div>
+
+</ion-content>

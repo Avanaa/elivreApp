@@ -1,0 +1,13 @@
+page-ler-post {
+    .rating-stars input[type=radio] {
+        display: none;
+    }
+
+    .rating-stars ion-icon.rs:before {
+        color: #FC0;
+    }
+
+    .rating-stars input[type=radio]:checked ~ label ion-icon.rs:before {
+        color: #CCC;
+    }
+}
