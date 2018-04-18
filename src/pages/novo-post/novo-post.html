@@ -25,9 +25,10 @@
         
         <ion-item>
             <div class="rating-stars">
+                <input type="radio" [(ngModel)]="post.nota" id="star-0" name="nota" value="0" checked/>
 
                 <label for="star-1" icon-only ><ion-icon name="star" class="rs"></ion-icon></label>
-                <input type="radio" [(ngModel)]="post.nota" id="star-1" name="nota" value="1" checked/>
+                <input type="radio" [(ngModel)]="post.nota" id="star-1" name="nota" value="1"/>
                 
                 <label for="star-2" icon-only><ion-icon name="star" class="rs"></ion-icon></label>
                 <input type="radio" [(ngModel)]="post.nota" id="star-2" name="nota" value="2"/>
