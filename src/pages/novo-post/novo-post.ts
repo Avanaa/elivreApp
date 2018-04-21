@@ -40,9 +40,10 @@ export class NovoPostPage {
     }
 
     public addPost(){
+        
         console.log('Add Post Running...');
 
-        this._db.push(this.post);
+        let data = this._db.push(this.post);
         this.navCtrl.setRoot(HomePage);
     }
 }

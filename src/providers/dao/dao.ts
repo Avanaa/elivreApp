@@ -11,78 +11,83 @@ import { firebaseConfig } from '../../util/config';
 @Injectable()
 export class DaoProvider {
 
-  private _posts : Post[];
+    private _posts : Post[];
 
-  constructor() {
-    firebase.initializeApp(firebaseConfig);
-  }
-  
-  public list() : Post[] {
-
-    this._posts = new Array<Post>();
-
-    firebase.database().ref('/posts').on('value', snapshot => {
-      this.convert(snapshot);
-    });
-
-    return this._posts;
-  }
-
-  public update(post : Post) : void {
-    if(post){
-      firebase.database().ref('/posts').update(post)
+    constructor() {
+        firebase.initializeApp(firebaseConfig);
     }
-  }
 
-  public set(post : Post) : void {
-    firebase.database().ref('/posts').set({
-      uuid : post.uuid,
-      value : post
-    });
-  }
+    public list() : Post[] {
 
-  public push(post : Post) : void {
-    post.ativo    = true;
-    post.data_hora = new Date();
+        this._posts = new Array<Post>();
 
-    firebase.database().ref('/posts').push(post);
-  }
+        firebase.database().ref('/posts').on('value', snapshot => {
+            this.convert(snapshot);
+        });
 
-  public get(uuid : string){
-    let post : Post = new Post();
-    if(uuid){
-      let query = firebase.database().ref('/posts').orderByChild('uuid').equalTo(uuid);
-      query.on('value', snapshot =>{
-        /**
-         * ...
-         */
-      });
-      return post;
+        return this._posts;
     }
-  }
 
-  public delete(post : Post){
-    firebase.database().ref('/posts').set({
-      uuid : post.uuid,
-      ativo : false
-    });
-  }
+    public push(post : Post) : void {
+        post.ativo    = true;
+        post.data_hora = new Date();
 
-  private convert(snapshot : any) : void {
-    
-    snapshot.forEach(childSnapshot => {
-    
-    let post  : Post  = new Post();
+        post.uuid = firebase.database().ref('/posts').push(post).key;
+        this.update(post);
+    }
 
-    post.titulo     = childSnapshot.val().titulo;
-    post.descricao  = childSnapshot.val().descricao;
-    post.ativo      = childSnapshot.val().ativo;
-    post.data_hora  = childSnapshot.val().data_hora;
-    post.local.lat  = childSnapshot.val().local.lat;
-    post.local.lng  = childSnapshot.val().local.lng;
+    public update(post : Post) : void {
+        if(post){
+            firebase.database().ref('/posts/' + post.uuid ).update(post)
+        }
+    }
 
-    this._posts.push(post);
+    public get(uuid : string) : Post {
+        let post : Post;
+        firebase.database().ref('posts/' + uuid).once('value', snapshot => {
+            post = this.convertPost(snapshot);
+        });
+        return post;
+    }
 
-    });
-  }
+    public delete(post : Post){
+        firebase.database().ref('/posts').set({
+            uuid : post.uuid,
+            ativo : false
+        });
+    }
+
+    private convert(snapshot : any) : void {
+
+        snapshot.forEach(childSnapshot => {
+
+            let post  : Post  = new Post();
+
+            post.uuid       = childSnapshot.val().uuid;
+            post.titulo     = childSnapshot.val().titulo;
+            post.descricao  = childSnapshot.val().descricao;
+            post.ativo      = childSnapshot.val().ativo;
+            post.data_hora  = childSnapshot.val().data_hora;
+            post.local.lat  = childSnapshot.val().local.lat;
+            post.local.lng  = childSnapshot.val().local.lng;
+
+            this._posts.push(post);
+        });
+    }
+
+    public convertPost(snapshot: any): Post {
+
+        let post: Post  = new Post();
+
+        post.uuid       = snapshot.val().uuid;
+        post.titulo     = snapshot.val().titulo;
+        post.descricao  = snapshot.val().descricao;
+        post.ativo      = snapshot.val().ativo;
+        post.data_hora  = snapshot.val().data_hora;
+        post.local.lat  = (snapshot.val().local) ? snapshot.val().local.lat : null;
+        post.local.lng  = (snapshot.val().local) ? snapshot.val().local.lng : null;
+
+        return post;
+    }
+
 }

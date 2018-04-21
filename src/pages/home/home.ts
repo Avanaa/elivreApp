@@ -1,14 +1,15 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { NavController, Platform, AlertController, Alert } from 'ionic-angular';
 import { NovoPostPage } from '../novo-post/novo-post';
+import { LerPostPage } from '../ler-post/ler-post';
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
 import { Post } from '../../models/post';
-import { 
-    GoogleMap, 
-    GoogleMaps, 
-    GoogleMapOptions, 
-    LatLng, 
-    GoogleMapsEvent, 
+import {
+    GoogleMap,
+    GoogleMaps,
+    GoogleMapOptions,
+    LatLng,
+    GoogleMapsEvent,
     MarkerOptions
     } from '@ionic-native/google-maps';
 import { DaoProvider } from '../../providers/dao/dao';
@@ -25,8 +26,8 @@ export class HomePage implements OnInit {
     public map                      : GoogleMap;
     public list                     : Post[];
 
-    constructor( 
-        public navCtrl          : NavController, 
+    constructor(
+        public navCtrl          : NavController,
         public alertCtrl        : AlertController,
         public  platform        : Platform,
         private _geolocation    : GeolocationProvider,
@@ -36,8 +37,10 @@ export class HomePage implements OnInit {
 
     ngOnInit() : void {
 
-        this.list = this._db.list();
-        
+      this.list = this._db.list();
+
+      // this.openPost("-LALLVEw17KXWAMB4JxS");
+
         this._geolocation.getCurrentPosition()
         .then((data) => {
 
@@ -53,11 +56,18 @@ export class HomePage implements OnInit {
             });
             alert.present();
 
+            // localizacao default
+            const localizacao = {
+              coords: {
+                latitude: -8.0629562,
+                longitude: -34.8720158
+              }
+            };
+            this.initMap(localizacao);
         });
     }
 
     initMap(data : any){
-        
         let element = this.mapElement.nativeElement;
 
         let options : GoogleMapOptions = {
@@ -78,17 +88,16 @@ export class HomePage implements OnInit {
         };
 
         this.map = this._googleMaps.create(element, options);
-        
-        this.map.on(GoogleMapsEvent.MAP_READY)
-            .subscribe(() => {
-                
+
+        this.map.on(GoogleMapsEvent.MAP_READY).subscribe(() => {
+
                 this.createMarkers();
 
                 this.map.on(GoogleMapsEvent.MAP_CLICK)
                     .subscribe((data : LatLng) =>{
 
                         let dataJson = JSON.parse(data.toString());
-                        
+
                         let local : Local = new Local();
                         local.lat = dataJson.lat;
                         local.lng = dataJson.lng;
@@ -99,9 +108,9 @@ export class HomePage implements OnInit {
     }
 
     createMarkers(){
-        
+
         this.list.forEach((post) => {
-            
+
             let options : MarkerOptions = {
                 position : new LatLng(post.local.lat, post.local.lng),
                 icon : 'blue',
@@ -109,15 +118,34 @@ export class HomePage implements OnInit {
                 disableAutoPan : false,
                 title : post.titulo
             };
-            this.map.addMarker(options);
+            
+            this.map.addMarker(options)
+                .then(marker => {
+
+                    marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
+                        let uuid = post.uuid;
+                        this.openPost(uuid);
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         });
     }
 
     newPost(data : Local){
-       
+
        this.navCtrl.setRoot(NovoPostPage, {
         'data' : data,
         'db'  : this._db
         });
+    }
+
+    openPost(uuid : string) {
+
+      this.navCtrl.push(LerPostPage, {
+        'uuid': uuid,
+        'db': this._db
+      });
     }
 }
