@@ -12,28 +12,56 @@
 
 <ion-content padding>
 
-  <div *ngIf="post">
-    <ion-card>
-      <ion-item>
-        <ion-avatar icon-start>
-          <img src="/">
-        </ion-avatar>
-        <p>{{post.data_hora}}</p>
-      </ion-item>
+    <div *ngIf="post">
+
+        <!-- Exibir post -->
+        <ion-card>
+            <ion-item>
+                <ion-avatar icon-start>
+                    <img src="/">
+                </ion-avatar>
+                <p>{{ post.data_hora }}</p>
+            </ion-item>
       
-      <ion-card-content>
-        <h3>{{post.titulo}}</h3>
-        <p>{{post.descricao}}</p>
-      </ion-card-content>
+            <ion-card-content>
+                <h3>{{ post.titulo }}</h3>
+                <p>{{ post.descricao }}</p>
+            </ion-card-content>
 
-      <ion-row>
-        <button (click)="comentar()" ion-button icon-left clear small>
-          <ion-icon name="text"></ion-icon>
-          <div>0 Comments</div>
-        </button>
-      </ion-row>
+            <ion-row>
+                <button (click)="gostei()" ion-button icon-left clear small>
+                    <ion-icon name="thumbs-up"></ion-icon>
+                    <div>{{ post.gostei }}</div>
+                </button>
+                
+                <button (click)="comentar()" ion-button icon-left clear small>
+                    <ion-icon name="text"></ion-icon>
+                    <div>{{ comentarios.length }}</div>
+                </button>
+            </ion-row>
+        </ion-card>
 
-    </ion-card>
-  </div>
+        <!-- Criar comentário -->
+        <div *ngIf="comentAtivo">
+            <form>
+                <ion-item>
+                    <ion-label floating>Comentário</ion-label>
+                    <ion-textarea [(ngModel)]="comentario.descricao" name="descricao"></ion-textarea>
+                </ion-item>
 
+                <button (click)="enviaComentario()" ion-button>Comentar</button>
+            </form>
+        </div>
+
+        <!-- Listar comentários -->
+        <div *ngIf="!comentAtivo">
+            <ion-list>
+                <ion-item *ngFor="let coment of comentarios">
+                    <h3>{{ coment.descricao }}</h3>
+                    <p>{{ coment.data_hora }}</p>
+                </ion-item>
+            </ion-list>
+        </div>
+
+    </div>
 </ion-content>

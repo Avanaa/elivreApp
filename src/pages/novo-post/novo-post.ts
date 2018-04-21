@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicPage, 
   NavController, 
   NavParams, 
-  AlertController
+  AlertController,
+  Platform
 } from 'ionic-angular';
 import { Post } from '../../models/post';
 import { DaoProvider } from '../../providers/dao/dao';
@@ -21,7 +22,7 @@ import { Local } from '../../models/local';
   selector: 'page-novo-post',
   templateUrl: 'novo-post.html',
 })
-export class NovoPostPage {
+export class NovoPostPage implements OnInit {
 
     public post : Post;
     private _db : DaoProvider;
@@ -29,7 +30,15 @@ export class NovoPostPage {
     constructor(
         public navCtrl      : NavController, 
         public navParams    : NavParams,
-        public alertCtrl    : AlertController) {
+        public alertCtrl    : AlertController,
+        public platform     : Platform) {
+
+            this.platform.registerBackButtonAction(() => {
+                this.goHome();
+            });
+    }
+
+    ngOnInit(){
 
         this.post = new Post();
         this._db  = this.navParams.get('db');
@@ -40,10 +49,11 @@ export class NovoPostPage {
     }
 
     public addPost(){
-        
-        console.log('Add Post Running...');
+        this._db.push(this.post);
+        this.goHome();
+    }
 
-        let data = this._db.push(this.post);
+    public goHome(){
         this.navCtrl.setRoot(HomePage);
     }
 }

@@ -1,17 +1,17 @@
-export class Avaliacao {
+export class Comentario {
     
     constructor(){
         
-        this.uuid = '';
         this.usuario = '';
         this.descricao = '';
+        this.ativo = false;
         this. data_hora = new Date();
-        this.nota = 0;
     }
-    
+
     uuid : string;
+    post : string;
+    ativo : boolean;
     usuario : string;
     descricao : string;
     data_hora : Date;
-    nota : number;
 }

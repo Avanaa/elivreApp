@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { NavController, Platform, AlertController, Alert } from 'ionic-angular';
+import { NavController, Platform, AlertController, Alert, ModalController } from 'ionic-angular';
 import { NovoPostPage } from '../novo-post/novo-post';
 import { LerPostPage } from '../ler-post/ler-post';
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
@@ -32,8 +32,7 @@ export class HomePage implements OnInit {
         public  platform        : Platform,
         private _geolocation    : GeolocationProvider,
         private _db             : DaoProvider,
-        private _googleMaps     : GoogleMaps
-    ){}
+        private _googleMaps     : GoogleMaps) { }
 
     ngOnInit() : void {
 
@@ -91,29 +90,54 @@ export class HomePage implements OnInit {
 
         this.map.on(GoogleMapsEvent.MAP_READY).subscribe(() => {
 
-                this.createMarkers();
+            this.createMarkers();
 
-                this.map.on(GoogleMapsEvent.MAP_CLICK)
-                    .subscribe((data : LatLng) =>{
+            this.map.on(GoogleMapsEvent.MAP_CLICK)
+                .subscribe((data : LatLng) =>{
 
-                        let dataJson = JSON.parse(data.toString());
+                    let dataJson = JSON.parse(data.toString());
 
-                        let local : Local = new Local();
-                        local.lat = dataJson.lat;
-                        local.lng = dataJson.lng;
+                    let local : Local = new Local();
+                    local.lat = dataJson.lat;
+                    local.lng = dataJson.lng;
 
-                        this.newPost(local);
-                    });
-            });
+                    this.newPost(local);
+                });
+                    
+            this.map.on(GoogleMapsEvent.MAP_LONG_CLICK)
+                .subscribe((data : LatLng) =>{
+    
+                    let dataJson = JSON.parse(data.toString());
+    
+                    let local : Local = new Local();
+                    local.lat = dataJson.lat;
+                    local.lng = dataJson.lng;
+    
+                    this.newPost(local);
+                });
+        });
     }
 
     createMarkers(){
 
         this.list.forEach((post) => {
+            let iconColor : string;
+
+            if(post.nota < 3){
+                iconColor = 'red';
+            }
+            
+            if(post.nota == 3){
+                iconColor = 'yellow';
+            }
+
+            if(post.nota > 3){
+                iconColor = 'green'
+            }
 
             let options : MarkerOptions = {
                 position : new LatLng(post.local.lat, post.local.lng),
-                icon : 'blue',
+                icon : iconColor,
                 animation : 'DROP',
                 disableAutoPan : false,
                 title : post.titulo
@@ -134,16 +158,14 @@ export class HomePage implements OnInit {
     }
 
     newPost(data : Local){
-
        this.navCtrl.setRoot(NovoPostPage, {
-        'data' : data,
-        'db'  : this._db
+        'data'  : data,
+        'db'    : this._db
         });
     }
 
     openPost(uuid : string) {
-
-      this.navCtrl.push(LerPostPage, {
+      this.navCtrl.setRoot(LerPostPage, {
         'uuid': uuid,
         'db': this._db
       });

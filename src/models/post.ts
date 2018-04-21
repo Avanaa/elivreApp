@@ -1,4 +1,4 @@
-import { Avaliacao } from "./avaliacao";
+import { Comentario } from "./comentario";
 import { Local } from "./local";
 
 export class Post {
@@ -13,6 +13,7 @@ export class Post {
         this.data_hora = new Date();
         this.ativo = false;
         this.local = new Local();
+        this.gostei = 0;
     }
 
     public local : Local;
@@ -22,6 +23,6 @@ export class Post {
     descricao : string;
     nota : number;
     data_hora : Date;
-    comentarios : Avaliacao[];
     ativo : boolean;
+    gostei : number
 }

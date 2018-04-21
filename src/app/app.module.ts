@@ -15,6 +15,7 @@ import 'rxjs/operator/map';
 import { HomePage } from '../pages/home/home';
 import { NovoPostPage } from '../pages/novo-post/novo-post';
 import { LerPostPage } from '../pages/ler-post/ler-post';
+import { LoginPage } from '../pages/login/login';
 
 /**
  * Providers
@@ -27,6 +28,7 @@ import { DaoProvider } from '../providers/dao/dao';
 @NgModule({
   declarations: [
     MyApp,
+    LoginPage,
     HomePage,
     NovoPostPage,
     LerPostPage
@@ -38,6 +40,7 @@ import { DaoProvider } from '../providers/dao/dao';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
+    LoginPage,
     HomePage,
     NovoPostPage,
     LerPostPage

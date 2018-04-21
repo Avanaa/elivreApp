@@ -12,9 +12,7 @@ export class GeolocationProvider {
   constructor( private _geolocation : Geolocation) {}
 
   public getCurrentPosition() : Promise<any> {
-
-    console.log('Get Current Position running...');
-
+    
     return this._geolocation.getCurrentPosition({
       maximumAge : 3000,
       timeout : 5000,

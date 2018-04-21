@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 import { Post } from '../../models/post';
 import { firebaseConfig } from '../../util/config';
+import { Comentario } from '../../models/comentario';
 /*
   Generated class for the DaoProvider provider.
 
@@ -70,12 +71,13 @@ export class DaoProvider {
             post.data_hora  = childSnapshot.val().data_hora;
             post.local.lat  = childSnapshot.val().local.lat;
             post.local.lng  = childSnapshot.val().local.lng;
+            post.gostei     = childSnapshot.val().gostei;
 
             this._posts.push(post);
         });
     }
 
-    public convertPost(snapshot: any): Post {
+    private convertPost(snapshot: any): Post {
 
         let post: Post  = new Post();
 
@@ -86,8 +88,43 @@ export class DaoProvider {
         post.data_hora  = snapshot.val().data_hora;
         post.local.lat  = (snapshot.val().local) ? snapshot.val().local.lat : null;
         post.local.lng  = (snapshot.val().local) ? snapshot.val().local.lng : null;
+        post.gostei     = (snapshot.val().gostei) ? snapshot.val().gostei : 0;
 
         return post;
     }
 
+    public addComentario(post : Post, comentario : Comentario){
+        comentario.ativo = true;
+        comentario.post = post.uuid;
+        comentario.data_hora = new Date();
+
+        comentario.uuid = firebase.database().ref('/comentario').push(comentario).key;
+        firebase.database().ref('/comentario/' + comentario.uuid).update(comentario);
+    }
+
+    public getComentarios(post : Post) : Comentario[] {
+
+        let comentarios : Comentario[];
+        comentarios = new Array<Comentario>();
+
+        firebase.database().ref('/comentario')
+            .orderByChild('post')
+            .equalTo(post.uuid)
+            .on('value', snapshot => {
+            this.convertComentarios(snapshot, comentarios);
+        });
+        return comentarios;
+    }
+
+    private convertComentarios(snapshot : any, comentarios : Comentario[]) : Comentario[] {
+
+        snapshot.forEach(childSnapshot => {
+            let comentario : Comentario = new Comentario();
+            comentario.usuario = childSnapshot.val().usuario;
+            comentario.descricao = childSnapshot.val().descricao;
+            comentario.data_hora = childSnapshot.val().data_hora;
+            comentarios.push(comentario);
+        });
+        return comentarios;
+    }
 }
