@@ -10,8 +10,7 @@ import {
     GoogleMapOptions,
     LatLng,
     GoogleMapsEvent,
-    MarkerOptions,
-    CameraPosition
+    MarkerOptions
     } from '@ionic-native/google-maps';
 import { DaoProvider } from '../../providers/dao/dao';
 import { Local } from '../../models/local';
@@ -39,7 +38,7 @@ export class HomePage implements OnInit {
         private _googleMaps     : GoogleMaps) { }
 
     ngOnInit() : void {
-        
+
         this.loader = this.loadingCtrl.create({
             dismissOnPageChange : false,
             content : 'Aguarde enquanto os dados são carregados...'
@@ -98,10 +97,14 @@ export class HomePage implements OnInit {
 
         this.map = this._googleMaps.create(element, options);
 
-        this.map.on(GoogleMapsEvent.MY_LOCATION_BUTTON_CLICK).subscribe(() => {
-            this.map.setCameraTarget(new LatLng(data.coords.latitude, data.coords.longitude));
-            this.map.setCameraZoom(18);
-        });
+        this.map.on(GoogleMapsEvent.MY_LOCATION_BUTTON_CLICK)
+            .subscribe(() => {
+                this.map.moveCamera({
+                    target : new LatLng(data.coords.latitude, data.coords.longitude),
+                    zoom : 18,
+                    duration : 2000
+                });
+            });
 
         this.map.on(GoogleMapsEvent.MAP_READY).subscribe(() => {
 
@@ -127,7 +130,7 @@ export class HomePage implements OnInit {
                                 {
                                     text : 'Tentar novamente',
                                     role : 'try',
-                                    handler : () => { this.getLocal() }
+                                    handler : () => { this.refresh() }
                                 },
                                 {
                                     text : 'Cancelar',
@@ -142,14 +145,36 @@ export class HomePage implements OnInit {
  
             this.map.on(GoogleMapsEvent.MAP_LONG_CLICK)
                 .subscribe((data : LatLng) =>{
+                    if (this.locOn) {
+
+                        let dataJson = JSON.parse(data.toString());
     
-                    let dataJson = JSON.parse(data.toString());
-    
-                    let local : Local = new Local();
-                    local.lat = dataJson.lat;
-                    local.lng = dataJson.lng;
-    
-                    this.newPost(local);
+                        let local : Local = new Local();
+                        local.lat = dataJson.lat;
+                        local.lng = dataJson.lng;
+        
+                        this.newPost(local);    
+                    
+                    } else {
+                        let alert = this.alertCtrl.create({
+                            title : 'Não conseguimos saber onde você está',
+                            subTitle : 'Sua localização atual não foi encontrada, verifique se seu GPS está ligado'
+                                + ' e seu dispositivo tem acesso a rede e tente novamente',
+                            buttons : [
+                                {
+                                    text : 'Tentar novamente',
+                                    role : 'try',
+                                    handler : () => { this.refresh() }
+                                },
+                                {
+                                    text : 'Cancelar',
+                                    role : 'cancel',
+                                    handler : () => { console.log('cancel action') }
+                                }
+                            ]
+                        });
+                        alert.present();
+                    }
                 });
         });
     }
@@ -194,7 +219,8 @@ export class HomePage implements OnInit {
       });
     }
 
-    public getLocal(){
+    public refresh(){
         this.navCtrl.setRoot(this.navCtrl.getActive().component);
     }
+
 }
