@@ -8,7 +8,6 @@ import { IonicPage,
 import { Post } from '../../models/post';
 import { DaoProvider } from '../../providers/dao/dao';
 import { HomePage } from '../home/home';
-import { Comentario } from '../../models/comentario';
 
 /**
  * Generated class for the LerPostPage page.
@@ -25,10 +24,6 @@ import { Comentario } from '../../models/comentario';
 export class LerPostPage implements OnInit{
 
     public post         : Post;
-    public comentarios  : Comentario[];
-    public comentario   : Comentario;
-    public comentAtivo  : boolean;
-
     private _db         : DaoProvider;
 
     constructor(
@@ -46,17 +41,6 @@ export class LerPostPage implements OnInit{
         this._db            = this.navParams.get('db');
         let uuid            = this.navParams.get('uuid');
         this.post           = this._db.get(uuid);
-        this.comentarios    = this._db.getComentarios(this.post);
-    }
-
-    public comentar(){
-        this.comentario = new Comentario();
-        this.comentAtivo = true;
-    }
-
-    public enviaComentario(){
-        this._db.addComentario(this.post, this.comentario);
-        this.comentAtivo = false;
     }
 
     public gostei(){

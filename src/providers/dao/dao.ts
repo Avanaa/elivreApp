@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 import { Post } from '../../models/post';
 import { firebaseConfig } from '../../util/config';
-import { Comentario } from '../../models/comentario';
 /*
   Generated class for the DaoProvider provider.
 
@@ -91,40 +90,5 @@ export class DaoProvider {
         post.gostei     = (snapshot.val().gostei) ? snapshot.val().gostei : 0;
 
         return post;
-    }
-
-    public addComentario(post : Post, comentario : Comentario){
-        comentario.ativo = true;
-        comentario.post = post.uuid;
-        comentario.data_hora = new Date();
-
-        comentario.uuid = firebase.database().ref('/comentario').push(comentario).key;
-        firebase.database().ref('/comentario/' + comentario.uuid).update(comentario);
-    }
-
-    public getComentarios(post : Post) : Comentario[] {
-
-        let comentarios : Comentario[];
-        comentarios = new Array<Comentario>();
-
-        firebase.database().ref('/comentario')
-            .orderByChild('post')
-            .equalTo(post.uuid)
-            .on('value', snapshot => {
-            this.convertComentarios(snapshot, comentarios);
-        });
-        return comentarios;
-    }
-
-    private convertComentarios(snapshot : any, comentarios : Comentario[]) : Comentario[] {
-
-        snapshot.forEach(childSnapshot => {
-            let comentario : Comentario = new Comentario();
-            comentario.usuario = childSnapshot.val().usuario;
-            comentario.descricao = childSnapshot.val().descricao;
-            comentario.data_hora = childSnapshot.val().data_hora;
-            comentarios.push(comentario);
-        });
-        return comentarios;
     }
 }

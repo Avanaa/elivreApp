@@ -1,4 +1,3 @@
-import { Comentario } from "./comentario";
 import { Local } from "./local";
 
 export class Post {

@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { NavController, Platform, AlertController, Alert, ModalController } from 'ionic-angular';
+import { NavController, Platform, AlertController, Alert, LoadingController, Loading } from 'ionic-angular';
 import { NovoPostPage } from '../novo-post/novo-post';
 import { LerPostPage } from '../ler-post/ler-post';
 import { GeolocationProvider } from '../../providers/geolocation/geolocation';
@@ -10,7 +10,8 @@ import {
     GoogleMapOptions,
     LatLng,
     GoogleMapsEvent,
-    MarkerOptions
+    MarkerOptions,
+    CameraPosition
     } from '@ionic-native/google-maps';
 import { DaoProvider } from '../../providers/dao/dao';
 import { Local } from '../../models/local';
@@ -25,32 +26,41 @@ export class HomePage implements OnInit {
     @ViewChild('map') mapElement    : ElementRef;
     public map                      : GoogleMap;
     public list                     : Post[];
+    public loader                   : Loading;
+    public locOn                    : boolean;
 
     constructor(
         public navCtrl          : NavController,
         public alertCtrl        : AlertController,
+        public loadingCtrl      : LoadingController,
         public  platform        : Platform,
         private _geolocation    : GeolocationProvider,
         private _db             : DaoProvider,
         private _googleMaps     : GoogleMaps) { }
 
     ngOnInit() : void {
+        
+        this.loader = this.loadingCtrl.create({
+            dismissOnPageChange : false,
+            content : 'Aguarde enquanto os dados são carregados...'
+        });
+        this.loader.present();
 
-      this.list = this._db.list();
-
-      // this.openPost("-LALLVEw17KXWAMB4JxS");
+        this.list = this._db.list();
 
         this._geolocation.getCurrentPosition()
         .then((data) => {
-
+            this.locOn = true;
             this.initMap(data);
-
         })
         .catch((err) => {
 
+            this.locOn = false;
+
             let alert : Alert = this.alertCtrl.create({
-                title : 'Erro na localização',
-                subTitle : 'Verifique conexão com a internet e GPS',
+                title : 'Não foi encontrado seu local atual',
+                subTitle : 'Uma localização padrão foi carregada e você poderá consultar as postagens recentes. '
+                + 'Conecte-se a internet e ative a localização do seu aparelho para poder inserir posts',
                 buttons : ['Ok']
             });
             alert.present();
@@ -74,8 +84,8 @@ export class HomePage implements OnInit {
             controls : {
                 compass : true,
                 myLocation : true,
-                myLocationButton : true,
-                mapToolbar : true,
+                myLocationButton : this.locOn,
+                mapToolbar : true
             },
             camera : {
                 target : {
@@ -88,22 +98,48 @@ export class HomePage implements OnInit {
 
         this.map = this._googleMaps.create(element, options);
 
+        this.map.on(GoogleMapsEvent.MY_LOCATION_BUTTON_CLICK).subscribe(() => {
+            this.map.setCameraTarget(new LatLng(data.coords.latitude, data.coords.longitude));
+            this.map.setCameraZoom(18);
+        });
+
         this.map.on(GoogleMapsEvent.MAP_READY).subscribe(() => {
 
             this.createMarkers();
-
+            
             this.map.on(GoogleMapsEvent.MAP_CLICK)
                 .subscribe((data : LatLng) =>{
 
-                    let dataJson = JSON.parse(data.toString());
+                    if (this.locOn) {
+                        let dataJson = JSON.parse(data.toString());
 
-                    let local : Local = new Local();
-                    local.lat = dataJson.lat;
-                    local.lng = dataJson.lng;
-
-                    this.newPost(local);
+                        let local : Local = new Local();
+                        local.lat = dataJson.lat;
+                        local.lng = dataJson.lng;
+    
+                        this.newPost(local);    
+                    } else {
+                        let alert = this.alertCtrl.create({
+                            title : 'Não conseguimos saber onde você está',
+                            subTitle : 'Sua localização atual não foi encontrada, verifique se seu GPS está ligado'
+                                + ' e seu dispositivo tem acesso a rede e tente novamente',
+                            buttons : [
+                                {
+                                    text : 'Tentar novamente',
+                                    role : 'try',
+                                    handler : () => { this.getLocal() }
+                                },
+                                {
+                                    text : 'Cancelar',
+                                    role : 'cancel',
+                                    handler : () => { console.log('cancel action') }
+                                }
+                            ]
+                        });
+                        alert.present();
+                    }
                 });
-                    
+ 
             this.map.on(GoogleMapsEvent.MAP_LONG_CLICK)
                 .subscribe((data : LatLng) =>{
     
@@ -121,23 +157,10 @@ export class HomePage implements OnInit {
     createMarkers(){
 
         this.list.forEach((post) => {
-            let iconColor : string;
-
-            if(post.nota < 3){
-                iconColor = 'red';
-            }
-            
-            if(post.nota == 3){
-                iconColor = 'yellow';
-            }
-
-            if(post.nota > 3){
-                iconColor = 'green'
-            }
 
             let options : MarkerOptions = {
                 position : new LatLng(post.local.lat, post.local.lng),
-                icon : iconColor,
+                icon : 'blue',
                 animation : 'DROP',
                 disableAutoPan : false,
                 title : post.titulo
@@ -145,7 +168,6 @@ export class HomePage implements OnInit {
             
             this.map.addMarker(options)
                 .then(marker => {
-
                     marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
                         let uuid = post.uuid;
                         this.openPost(uuid);
@@ -155,6 +177,7 @@ export class HomePage implements OnInit {
                     console.log(err);
                 });
         });
+        this.loader.dismiss();
     }
 
     newPost(data : Local){
@@ -169,5 +192,9 @@ export class HomePage implements OnInit {
         'uuid': uuid,
         'db': this._db
       });
+    }
+
+    public getLocal(){
+        this.navCtrl.setRoot(this.navCtrl.getActive().component);
     }
 }
