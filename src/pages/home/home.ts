@@ -10,7 +10,10 @@ import {
     GoogleMapOptions,
     LatLng,
     GoogleMapsEvent,
-    MarkerOptions
+    MarkerClusterOptions,
+    MarkerCluster,
+    MarkerOptions,
+    Marker
     } from '@ionic-native/google-maps';
 import { DaoProvider } from '../../providers/dao/dao';
 import { Local } from '../../models/local';
@@ -27,6 +30,7 @@ export class HomePage implements OnInit {
     public list                     : Post[];
     public loader                   : Loading;
     public locOn                    : boolean;
+    public locations                : Array<any> = [];
 
     constructor(
         public navCtrl          : NavController,
@@ -97,19 +101,31 @@ export class HomePage implements OnInit {
 
         this.map = this._googleMaps.create(element, options);
 
-        this.map.on(GoogleMapsEvent.MY_LOCATION_BUTTON_CLICK)
-            .subscribe(() => {
-                this.map.moveCamera({
-                    target : new LatLng(data.coords.latitude, data.coords.longitude),
-                    zoom : 18,
-                    duration : 2000
-                });
-            });
-
         this.map.on(GoogleMapsEvent.MAP_READY).subscribe(() => {
 
-            this.createMarkers();
-            
+            /*
+            this.createMarkers(this.map);
+            */
+           
+            ///*
+            this.map.addMarkerCluster(this.createCluster())
+                .then((markerCluster : MarkerCluster) => {
+                    console.log(markerCluster);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            //*/
+
+            this.map.on(GoogleMapsEvent.MY_LOCATION_BUTTON_CLICK)
+                .subscribe(() => {
+                    this.map.moveCamera({
+                        target : new LatLng(data.coords.latitude, data.coords.longitude),
+                        zoom : 18,
+                        duration : 3000
+                    });
+                });
+
             this.map.on(GoogleMapsEvent.MAP_CLICK)
                 .subscribe((data : LatLng) =>{
 
@@ -177,10 +193,11 @@ export class HomePage implements OnInit {
                     }
                 });
         });
+        this.loader.dismiss();
     }
 
-    createMarkers(){
-
+    private createMarkers(map : GoogleMap){
+        
         this.list.forEach((post) => {
 
             let options : MarkerOptions = {
@@ -191,7 +208,7 @@ export class HomePage implements OnInit {
                 title : post.titulo
             };
             
-            this.map.addMarker(options)
+            map.addMarker(options)
                 .then(marker => {
                     marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
                         let uuid = post.uuid;
@@ -202,7 +219,6 @@ export class HomePage implements OnInit {
                     console.log(err);
                 });
         });
-        this.loader.dismiss();
     }
 
     newPost(data : Local){
@@ -221,6 +237,42 @@ export class HomePage implements OnInit {
 
     public refresh(){
         this.navCtrl.setRoot(this.navCtrl.getActive().component);
+    }
+
+    private createCluster() : MarkerClusterOptions {
+
+        this.list.forEach((post : Post) => {
+
+            let markerOptions : MarkerOptions = {
+                position : { lat : post.local.lat, lng : post.local.lng },
+                icon : 'blue',
+                animation : 'DROP',
+                disableAutoPan : false,
+                title : post.titulo
+            };
+            
+            this.locations.push(markerOptions);
+        });
+
+        let options : MarkerClusterOptions = {
+            maxZoomLevel : 18,
+            markers : this.locations,
+            icons : [{
+                min: 2, 
+                max: 100, 
+                url: "./assets/icon/m1.png", 
+                anchor: {x: 16, y: 16},
+                label : {
+                    bold : true,
+                    color : 'white'
+                },
+                size : {
+                    width : 70,
+                    height : 70
+                }
+            }]
+        };
+        return options;
     }
 
 }
