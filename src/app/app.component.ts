@@ -12,7 +12,7 @@ export class MyApp {
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     platform.ready().then(() => {
-      statusBar.backgroundColorByHexString('#bdbdbd');
+      statusBar.backgroundColorByHexString('#e65100');
       splashScreen.hide();
     });
   }

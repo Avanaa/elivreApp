@@ -16,9 +16,9 @@
         <ion-card>
             <ion-item>
                 <ion-avatar icon-start>
-                    <img src="/">
+                    <img src="./assets/icon/user.png">
                 </ion-avatar>
-                <p>{{ post.data_hora }}</p>
+                <p>{{ post.data_hora | date: 'dd/MM/yyyy hh:mm' }} </p>
             </ion-item>
       
             <ion-card-content>
@@ -28,8 +28,8 @@
 
             <ion-row>
                 <button (click)="gostei()" ion-button icon-left clear small>
-                    <ion-icon name="thumbs-up"></ion-icon>
-                    <div>{{ post.gostei }}</div>
+                    <ion-icon class="icone-gostei" name="thumbs-up"></ion-icon>
+                    <div class="icone-gostei">{{ post.gostei }}</div>
                 </button>
             </ion-row>
         </ion-card>

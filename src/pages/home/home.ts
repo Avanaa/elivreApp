@@ -30,7 +30,6 @@ export class HomePage implements OnInit {
     public list                     : Post[];
     public loader                   : Loading;
     public locOn                    : boolean;
-    public locations                : Array<any> = [];
 
     constructor(
         public navCtrl          : NavController,
@@ -42,6 +41,10 @@ export class HomePage implements OnInit {
         private _googleMaps     : GoogleMaps) { }
 
     ngOnInit() : void {
+
+        if (this.map) {
+            this.map.remove();
+        }
 
         this.loader = this.loadingCtrl.create({
             dismissOnPageChange : false,
@@ -80,6 +83,7 @@ export class HomePage implements OnInit {
     }
 
     initMap(data : any){
+
         let element = this.mapElement.nativeElement;
 
         let options : GoogleMapOptions = {
@@ -103,19 +107,13 @@ export class HomePage implements OnInit {
 
         this.map.on(GoogleMapsEvent.MAP_READY).subscribe(() => {
 
-            /*
-            this.createMarkers(this.map);
-            */
-           
             ///*
-            this.map.addMarkerCluster(this.createCluster())
-                .then((markerCluster : MarkerCluster) => {
-                    console.log(markerCluster);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            this.createMarkers(this.map);
             //*/
+
+            /*
+            this.createCluster(this.map);
+            */
 
             this.map.on(GoogleMapsEvent.MY_LOCATION_BUTTON_CLICK)
                 .subscribe(() => {
@@ -202,7 +200,7 @@ export class HomePage implements OnInit {
 
             let options : MarkerOptions = {
                 position : new LatLng(post.local.lat, post.local.lng),
-                icon : 'blue',
+                icon : './assets/icon/cone.png',
                 animation : 'DROP',
                 disableAutoPan : false,
                 title : post.titulo
@@ -239,7 +237,11 @@ export class HomePage implements OnInit {
         this.navCtrl.setRoot(this.navCtrl.getActive().component);
     }
 
-    private createCluster() : MarkerClusterOptions {
+    private createCluster(map : GoogleMap) {
+
+        map.clear();
+        let locations : Array<MarkerOptions>;
+        locations = new Array<MarkerOptions>();
 
         this.list.forEach((post : Post) => {
 
@@ -250,13 +252,12 @@ export class HomePage implements OnInit {
                 disableAutoPan : false,
                 title : post.titulo
             };
-            
-            this.locations.push(markerOptions);
+            locations.push(markerOptions);
         });
 
         let options : MarkerClusterOptions = {
             maxZoomLevel : 18,
-            markers : this.locations,
+            markers : locations,
             icons : [{
                 min: 2, 
                 max: 100, 
@@ -272,7 +273,14 @@ export class HomePage implements OnInit {
                 }
             }]
         };
-        return options;
+
+        map.addMarkerCluster(options)
+            .then((markerCluster : MarkerCluster) => {
+                console.log(markerCluster);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 
 }
