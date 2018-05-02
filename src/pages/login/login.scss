@@ -1,3 +1,19 @@
 page-login {
+    // .proxima{display: flex;
+    //     justify-content: center;
+    //     align-items: center;}
+    button{text-transform: initial !important;text-align: center;}
+    div{width: 100%}
 
+    button.cadastro{margin: 2rem 0}
+    button.fb{background: #104e8b;}
+    button.goo{background: #ea4335;}
+    button.tw{background: #00aced}
+
+
+    p{text-align: center; }
+    .item{padding: 0}
+    .item-inner{padding: 0 !important}
+    .label{margin: 5px !important; color: black !important}
+    .input{border:1px solid grey; border-radius: 10px; padding: 5px}
 }

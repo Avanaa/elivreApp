@@ -15,8 +15,14 @@ import { HomePage } from '../home/home';
     templateUrl: 'login.html',
 })
 export class LoginPage {
+    public pag: number = 0;
+    public usuario = {email:"", senha:"", nome: ""}
 
     constructor(public navCtrl: NavController, public navParams: NavParams) {}
 
+    proxima(){
+        this.pag = 1;
+        console.log(this.usuario)
+    }
     login(){ this.navCtrl.setRoot(HomePage) }
 }

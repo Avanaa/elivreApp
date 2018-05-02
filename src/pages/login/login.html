@@ -11,20 +11,53 @@
 </ion-header>
 
 <ion-content padding>
-    <h2>
-        Faça login com uma rede social
-    </h2>
+
+    <div [hidden]="pag != 0">
+    <h2>Cadastre-se</h2>
     
-    <button ion-button block icon-only (click)="login()">
-        <ion-icon name="logo-facebook"></ion-icon>
+    <ion-list>
+        <ion-item>
+                <ion-label floating>E-mail</ion-label>
+                <ion-input type="email" [(ngModel)]="usuario.email"></ion-input>
+        </ion-item>
+
+        <ion-item>
+                <ion-label floating>Senha</ion-label>
+                <ion-input type="password" [(ngModel)]="usuario.senha"></ion-input>
+        </ion-item>
+        
+        <button ion-button block class="cadastro" (click)="proxima()" [disabled]="!usuario.senha || !usuario.email">
+                Cadastrar
+        </button>
+    </ion-list>
+
+
+    <p>
+       ou faça login com uma rede social
+    </p>
+    
+    <button class="fb" ion-button block icon-only (click)="login()">
+        <ion-icon name="logo-facebook"></ion-icon>facebook
     </button>
     
-    <button ion-button block icon-only (click)="login()">
-        <ion-icon name="logo-google"></ion-icon>
+    <button class="goo" ion-button block icon-only (click)="login()">
+        <ion-icon name="logo-google"></ion-icon>google
     </button>
 
-    <button ion-button block icon-only (click)="login()">
-        <ion-icon name="logo-twitter"></ion-icon>
+    <button class="tw" ion-button block icon-only (click)="login()">
+        <ion-icon name="logo-twitter"></ion-icon>twitter
     </button>
+    </div>
+
+    <div [hidden]="pag != 1">
+        <h1>Como deseja ser chamado?</h1>
+        <ion-item>
+                <ion-label color="primary" floating></ion-label>
+                <ion-input type="text" [(ngModel)]="usuario.nome"></ion-input>
+        </ion-item>
+        <button ion-button block class="cadastro" (click)="login()" [disabled]="!usuario.senha || !usuario.email">
+            Salvar
+        </button>
+    </div>
 
 </ion-content>
