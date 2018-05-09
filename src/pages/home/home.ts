@@ -32,6 +32,7 @@ export class HomePage implements OnInit {
     public locOn                    : boolean;
     public filtro = false;
     public radius = 1000;
+    public filtro_horas = 1;
 
     constructor(
         public navCtrl          : NavController,
@@ -296,8 +297,14 @@ export class HomePage implements OnInit {
 
         }else{
           this.filtro = false;
-          console.log(this.radius);
+          this.refresh();
         }
+    }
+
+    onSelectChange(selectedValue: any) {
+        this.filtro_horas = selectedValue;
+        console.log(this.filtro_horas);
+   
     }
 
 

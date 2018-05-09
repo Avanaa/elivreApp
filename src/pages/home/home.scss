@@ -13,4 +13,17 @@ page-home {
     .radius{display: flex; align-items: center;border-bottom: 1px solid #ef6c00;}
     .radius button{text-transform: initial;align-items: center;padding: 15px;background:#ef6c00 }
     .item{padding: 0 !important}
+
+    .filtro_horas{padding: 0 !important;
+        width: 50%;
+        float: right;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 1.5rem;
+        border-radius: 5px;
+        margin: .5rem;}
+
+    .input-wrapper{padding-left: .5rem}
+    ion-select{max-width: 100%;}
 }

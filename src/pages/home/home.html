@@ -1,7 +1,17 @@
 <ion-header>
     <ion-navbar>
         <ion-title>eLivre</ion-title>
+        <ion-item class="filtro_horas">
+            <ion-label>Última</ion-label>
+            <ion-select [(ngModel)]="filtro_horas" (ionChange)="onSelectChange($event)">
+              <ion-option value="1">24h</ion-option>
+              <ion-option value="2">48h</ion-option>
+              <ion-option value="3">Semana</ion-option>
+              <ion-option value="4">Mês</ion-option>
+            </ion-select>
+        </ion-item>
     </ion-navbar>
+    
 </ion-header>
 
 <ion-content>
