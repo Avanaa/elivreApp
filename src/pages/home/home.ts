@@ -30,6 +30,8 @@ export class HomePage implements OnInit {
     public list                     : Post[];
     public loader                   : Loading;
     public locOn                    : boolean;
+    public filtro = false;
+    public radius = 1000;
 
     constructor(
         public navCtrl          : NavController,
@@ -41,6 +43,9 @@ export class HomePage implements OnInit {
         private _googleMaps     : GoogleMaps) { }
 
     ngOnInit() : void {
+
+        //incializando raio
+        this.radius;
 
         if (this.map) {
             this.map.remove();
@@ -92,7 +97,7 @@ export class HomePage implements OnInit {
                 compass : true,
                 myLocation : true,
                 myLocationButton : this.locOn,
-                mapToolbar : true
+                mapToolbar : true,
             },
             camera : {
                 target : {
@@ -234,6 +239,7 @@ export class HomePage implements OnInit {
     }
 
     public refresh(){
+        this.filtro = false;
         this.navCtrl.setRoot(this.navCtrl.getActive().component);
     }
 
@@ -282,5 +288,18 @@ export class HomePage implements OnInit {
                 console.log(err);
             });
     }
+
+    //funcao para abrir e fechar filtro
+    filter(){
+        if(this.filtro == false){
+         this.filtro = true;
+
+        }else{
+          this.filtro = false;
+          console.log(this.radius);
+        }
+    }
+
+
 
 }

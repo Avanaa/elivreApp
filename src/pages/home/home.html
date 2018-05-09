@@ -4,10 +4,24 @@
     </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  
-    <div #map id="map"></div>
-  
+<ion-content>
+    <div [hidden]="filtro == false" class="radius">
+        <ion-item >
+          <ion-range min="100" max="10000" [(ngModel)]="radius">
+            <ion-label range-left>{{radius}}m</ion-label>
+            <ion-label range-right>10km</ion-label>
+          </ion-range>
+        </ion-item>
+        <button ion-button (click)="refresh()">Buscar</button> 
+    </div>
+   
+
+    <div #map id="map">
+    <ion-fab class="filter" right>
+        <button ion-fab mini (click)="filter($event)"><ion-icon name="ios-funnel"></ion-icon></button>
+    </ion-fab>
+    </div>
+
     <ion-fab right bottom>
         <button (click)="refresh()" ion-fab><ion-icon name="refresh"></ion-icon></button>
     </ion-fab>
